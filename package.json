@@ -1,0 +1,22 @@
+{
+  "name": "npower-crowdsale",
+  "version": "1.0.0",
+  "description": "NodePower enhanced token and crowdsale",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ongrid/npower-crowdsale.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ongrid/npower-crowdsale/issues"
+  },
+  "homepage": "https://github.com/ongrid/npower-crowdsale#readme"
+}
