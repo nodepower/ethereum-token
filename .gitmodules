@@ -1,3 +1,0 @@
-[submodule "zeppelin"]
-	path = zeppelin
-	url = git@github.com:OpenZeppelin/zeppelin-solidity.git
