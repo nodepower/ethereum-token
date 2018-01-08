@@ -4,7 +4,7 @@ Nodepower ethereum ecosystem consists of
 * Crowdsale contract for pre-ICO round
 
 ## Token contract
-[NodePowerToken.sol](contracts/NodePowerToken.sol)
+[NodePowerToken.sol](contracts/NodeToken.sol)
 
 ## Pre-ICO crowdsale
 WORK in progress...

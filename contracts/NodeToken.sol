@@ -6,11 +6,11 @@ import './token/MintableToken.sol';
 import './token/DetailedERC20.sol';
 import './ownership/Claimable.sol';
 
-contract NodePowerToken is BurnableToken, MintableToken, DetailedERC20, Claimable {
+contract NodeToken is BurnableToken, MintableToken, DetailedERC20, Claimable {
     string public name = "NodePower";
     string public symbol = "NODE";
     uint8 public decimals = 2;
-    function NodePowerToken()
+    function NodeToken()
     DetailedERC20(name, symbol, decimals)
     public
     {

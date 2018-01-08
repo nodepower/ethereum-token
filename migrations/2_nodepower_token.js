@@ -1,6 +1,6 @@
-var NodePowerToken = artifacts.require("NodePowerToken");
+var NodeToken = artifacts.require("NodeToken");
 
 module.exports = function(deployer) {
   // deployment steps
-  deployer.deploy(NodePowerToken);
+  deployer.deploy(NodeToken);
 };
