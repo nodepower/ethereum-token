@@ -101,6 +101,13 @@ contract('NodePowerToken', function (accounts) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
+  it('claimOwnership doesnt operational without transferOwnership first', function () {
+    return NodePowerToken.deployed().then(function (instance) {
+      return instance.claimOwnership({from:accounts[0]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
 });
 
 /*
