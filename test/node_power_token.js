@@ -59,10 +59,53 @@ contract('NodePowerToken', function (accounts) {
       assert.equal(result, 1200, 'Incorrect account balance');
     });
   });
+  it('Check resulting totalSupply', function () {
+    return NodePowerToken.deployed().then(function (instance) {
+      return instance.totalSupply();
+    }).then(function (result) {
+      assert.equal(result, 10200, 'Incorrect totalSupply');
+    });
+  });
+  it('Owner can initiate transferOwnership', function () {
+    return NodePowerToken.deployed().then(function (instance) {
+      return instance.transferOwnership(accounts[3]);
+    }).then(function (result) {
+      assert.equal(result['receipt']['status'],1);
+    });
+  });
+  it('Ownership not changed', function () {
+    return NodePowerToken.deployed().then(function (instance) {
+      return instance.owner();
+    }).then(function (result) {
+      assert.equal(result, accounts[0]);
+    });
+  });
+  it('New owner claim ownership', function () {
+    return NodePowerToken.deployed().then(function (instance) {
+      return instance.claimOwnership({from: accounts[3]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'OwnershipTransferred');
+    });
+  });
+  it('Ownership changed', function () {
+    return NodePowerToken.deployed().then(function (instance) {
+      return instance.owner();
+    }).then(function (result) {
+      assert.equal(result, accounts[3]);
+    });
+  });
+  it('Non-owner can\'t initiate ownership transfer', function () {
+    return NodePowerToken.deployed().then(function (instance) {
+      return instance.transferOwnership(accounts[0],{from:accounts[2]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
 });
 
 /*
 useful snippets for interactive use in truffle develop console
+ NodePowerToken.deployed().then(function(instance) {return instance.totalSupply});
  NodePowerToken.deployed().then(function(instance) {return instance.mint(web3.eth.accounts[0], 10000)});
  NodePowerToken.deployed().then(function(instance) {return instance.mint(web3.eth.accounts[1], 10000, {from: web3.eth.accounts[1]})});
 NodePowerToken.deployed().then(function(instance) {return instance.owner()});
