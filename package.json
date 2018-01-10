@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/ongrid/npower-crowdsale/issues"
   },
-  "homepage": "https://github.com/ongrid/npower-crowdsale#readme"
+  "homepage": "https://github.com/ongrid/npower-crowdsale#readme",
+  "dependencies": {
+    "unix-timestamp": "^0.2.0"
+  }
 }
