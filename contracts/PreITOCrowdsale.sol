@@ -50,7 +50,10 @@ contract PreITOCrowdSale {
     /* example arguments for constructor
     [1515441052,1615441052,300,1615441053,1715441052,3000,1715441053,1815441052,656]
     */
-    function PreITOCrowdSale(uint256[] _phases) public {
+    function PreITOCrowdSale(address _token, address _wallet, uint256 _minInvestUSD, uint256[] _phases) public {
+        token = NodeToken(_token);
+        wallet = _wallet;
+        minInvestUSD = _minInvestUSD;
         uint256 phaseID = 0;
         assert (_phases.length % 3 == 0);
         uint256 lastTime = _phases[0]-1;
