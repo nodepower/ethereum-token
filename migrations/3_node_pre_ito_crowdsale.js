@@ -1,4 +1,4 @@
-var PreITOCrowdSale = artifacts.require("PreITOCrowdSale");
+var NodeCrowdSale = artifacts.require("NodeCrowdSale");
 var datetime = require('unix-timestamp');
 var phase45PercentStart = datetime.fromDate("2018-01-15T00:00:00Z");
 var phase45PercentEnd = datetime.fromDate("2018-01-31T23:59:59Z");
@@ -23,5 +23,5 @@ var phase00PercentEnd = datetime.fromDate("2018-04-16T00:00:00Z");
 console.log("00% period:", (phase00PercentEnd-phase00PercentStart)/60/60/24);
 
 module.exports = function(deployer) {
-  deployer.deploy(PreITOCrowdSale, '0x123', '0x456', 100, [phase45PercentStart,phase45PercentEnd,45,phase40PercentStart,phase40PercentEnd,40]);
+  deployer.deploy(NodeCrowdSale, '0x123', '0x456', 100, [phase45PercentStart,phase45PercentEnd,45,phase40PercentStart,phase40PercentEnd,40]);
 };

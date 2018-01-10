@@ -4,7 +4,7 @@ pragma solidity ^0.4.18;
 import './NodeToken.sol';
 import './math/SafeMath.sol';
 
-contract PreITOCrowdSale {
+contract NodeCrowdSale {
     using SafeMath for uint256;
 
     struct Phase {
@@ -30,9 +30,9 @@ contract PreITOCrowdSale {
     // minimal allowed investment USD
     uint256 public minInvestUSD;
 
-    // minimal allowed investment, wei
+    // minimal allowed investment in wei
     // updated regularly by oracle
-    uint256 public minInvest;
+    uint256 public minInvestWei;
 
     uint256 public raisedTotal;
     uint256 public raisedFirstPhasePreITO;
@@ -50,7 +50,7 @@ contract PreITOCrowdSale {
     /* example arguments for constructor
     [1515441052,1615441052,300,1615441053,1715441052,3000,1715441053,1815441052,656]
     */
-    function PreITOCrowdSale(address _token, address _wallet, uint256 _minInvestUSD, uint256[] _phases) public {
+    function NodeCrowdSale(address _token, address _wallet, uint256 _minInvestUSD, uint256[] _phases) public {
         token = NodeToken(_token);
         wallet = _wallet;
         minInvestUSD = _minInvestUSD;

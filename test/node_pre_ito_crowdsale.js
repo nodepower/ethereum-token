@@ -1,5 +1,5 @@
 //var NodeToken = artifacts.require('NodeToken');
-var PreITOCrowdSale = artifacts.require("PreITOCrowdSale");
+var NodeCrowdSale = artifacts.require("NodeCrowdSale");
 var datetime = require('unix-timestamp');
 var phase45PercentStart = datetime.fromDate("2018-01-15T00:00:00Z");
 var phase45PercentEnd = datetime.fromDate("2018-01-31T23:59:59Z");
@@ -23,65 +23,65 @@ var phase00PercentStart = datetime.fromDate("2018-03-27T00:00:00Z");
 var phase00PercentEnd = datetime.fromDate("2018-04-16T00:00:00Z");
 console.log("00% period:", (phase00PercentEnd-phase00PercentStart)/60/60/24);
 
-contract('PreITOCrowdSale', function (accounts) {
+contract('NodeCrowdSale', function (accounts) {
   it('Token state variable filled', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.token();
     }).then(function (result) {
       assert.equal(result, 0x123);
     });
   });
   it('Wallet state variable filled', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.wallet();
     }).then(function (result) {
       assert.equal(result, 0x456);
     });
   });
   it('Phases provisioned successfully', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.totalPhases();
     }).then(function (result) {
       assert.equal(result, 2, 'should contain 2 phases');
     });
   });
   it('getBonusPercentByTime reverts before start', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.getBonusPercentByTime(phase45PercentStart-1);
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
   it('getBonusPercentByTime returns 45% if just started', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.getBonusPercentByTime(phase45PercentStart);
     }).then(function (result) {
       assert.equal(result, 45);
     });
   });
   it('getBonusPercentByTime returns 45% before the phase end', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.getBonusPercentByTime(phase40PercentStart-1);
     }).then(function (result) {
       assert.equal(result, 45);
     });
   });
   it('getBonusPercentByTime returns 40% at the 2nd phase start', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.getBonusPercentByTime(phase40PercentStart+1000);
     }).then(function (result) {
       assert.equal(result, 40);
     });
   });
   it('getBonusPercentByTime returns 40% at the 2nd phase end', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.getBonusPercentByTime(phase40PercentEnd-1000);
     }).then(function (result) {
       assert.equal(result, 40);
     });
   });
   it('getBonusPercentByTime reverts after 2nd phase end', function () {
-    return PreITOCrowdSale.deployed().then(function (instance) {
+    return NodeCrowdSale.deployed().then(function (instance) {
       return instance.getBonusPercentByTime(phase40PercentEnd+1);
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
