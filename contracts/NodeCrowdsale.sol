@@ -3,6 +3,8 @@ pragma solidity ^0.4.18;
 
 import './NodeToken.sol';
 import './math/SafeMath.sol';
+import './ownership/rbac/RBAC.sol';
+import './ownership/rbac/Roles.sol';
 
 contract NodeCrowdSale {
     using SafeMath for uint256;
@@ -28,15 +30,21 @@ contract NodeCrowdSale {
     uint256 public rateUSDETH;
 
     // minimal allowed investment USD
+    // configured once
     uint256 public minInvestUSD;
 
     // minimal allowed investment in wei
     // updated regularly by oracle
     uint256 public minInvestWei;
 
+    // total wei amount raised
     uint256 public raisedTotal;
-    uint256 public raisedFirstPhasePreITO;
-    uint256 public raisedCurrentPhasePreITO;
+
+    // wei raised by first deployed crowdsale contract (now obsolete)
+    // 0x78a0cfcfcff3e1b6d5798406ee62f7484c8cdc8f
+    uint256 public raisedByFirstContract;
+
+    uint256 public raisedByCurrentContract;
 
     /**
     * event for token purchase logging
@@ -47,9 +55,6 @@ contract NodeCrowdSale {
     */
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-    /* example arguments for constructor
-    [1515441052,1615441052,300,1615441053,1715441052,3000,1715441053,1815441052,656]
-    */
     function NodeCrowdSale(address _token, address _wallet, uint256 _minInvestUSD, uint256[] _phases) public {
         token = NodeToken(_token);
         wallet = _wallet;
