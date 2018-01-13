@@ -1,7 +1,8 @@
 pragma solidity ^0.4.18;
 
 
-import './token/StandardToken.sol';
+import "./token/StandardToken.sol";
+
 
 contract NodeToken is StandardToken {
     string public name = "NodePower";
@@ -20,10 +21,9 @@ contract NodeToken is StandardToken {
     event MinterRemoved(address indexed removedMinter);
     event Burn(address indexed burner, uint256 value);
 
-    function NodeToken() public  {
+    function NodeToken() public {
         owners[msg.sender] = true;
     }
-
 
     /**
      * @dev Function to mint tokens
