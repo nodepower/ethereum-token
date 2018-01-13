@@ -8,137 +8,165 @@ contract('NodeToken', function (accounts) {
       assert.equal(result, 21393997, 'Incorrect totalSupply');
     });
   });
-  it('Owner can\'t mint tokens to himself until it added to minters', function () {
+  it('Acc0 (owner by constructor) can\'t mint tokens to himself until it added to minters', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 10000);
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('Owner can\'t mint tokens to non-owners', function () {
+  it('Acc0 (owner by constructor) can\'t mint tokens to non-owners', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[1], 500);
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('Check totalSupply after unsuccessful mint', function () {
+  it('TotalSupply didn\'t change after failed mint attempts', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
       assert.equal(result, 21393997, 'Incorrect totalSupply');
     });
   });
-  it('Non-owner can\'t mint tokens', function () {
+  it('Acc9 (nobody) can\'t mint tokens', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 10000, {from: accounts[9]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('Check totalSupply after unsuccessful mint', function () {
+  it('TotalSupply didn\'t change after failed mint attempts', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
       assert.equal(result, 21393997, 'Incorrect totalSupply');
     });
   });
-  it('Non-owner can\'t add owners', function () {
+  it('Acc9 (nobody) can\'t add owners', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.addOwner(accounts[1], {from: accounts[9]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('Owner can add other owners', function () {
+  it('Acc0 (owner by constructor) can add Acc1 as a new owner', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.addOwner(accounts[1]);
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'OwnerAdded');
     });
   });
-  it('New owner can add other owners', function () {
+  it('Acc1 (new owner) can add Acc2 to owners', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.addOwner(accounts[2], {from: accounts[1]});
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'OwnerAdded');
     });
   });
-  it('Non-owner still can\'t mint tokens', function () {
+  it('Acc9 (nobody) can\'t mint tokens', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 10000, {from: accounts[9]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('First owner still can\'t mint tokens', function () {
+  it('Acc0 (owner) can\'t mint tokens until add himself to minters', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 10000, {from: accounts[0]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('Second owner still can\'t mint tokens', function () {
+  it('Acc1 (owner) can\'t mint tokens until add himself to minters', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 10000, {from: accounts[1]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('Second owner can add first owner as minter', function () {
+  it('Acc1 (owner) can add Acc0 to miners', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.addMinter(accounts[0], {from: accounts[1]});
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'MinterAdded');
     });
   });
-  it('First owner can add non-owner account_2 as minter', function () {
+  it('Acc0 (owner, minter) can add Acc3 (nobody) as minter', function () {
     return NodeToken.deployed().then(function (instance) {
-      return instance.addMinter(accounts[2], {from: accounts[0]});
+      return instance.addMinter(accounts[3], {from: accounts[0]});
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'MinterAdded');
     });
   });
-  it('Check totalSupply after unsuccessful mint before actual minting', function () {
+  it('TotalSupply didn\'t change after failed mint attempts', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
       assert.equal(result, 21393997, 'Incorrect totalSupply');
     });
   });
-  it('First owner 0 now able to mint to himself', function () {
+  it('First Acc0 (owner, minter) now able to mint to himself', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 12345, {from: accounts[0]});
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'Mint');
     });
   });
-  it('First owner 0 balance equals to just-minted value', function () {
+  it('Acc0 (owner, minter) balance equals to just-minted value', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.balanceOf(accounts[0]);
     }).then(function (result) {
       assert.equal(result, 12345);
     });
   });
-  it('Check totalSupply after first successful mint', function () {
+  it('Acc0 (owner, minter) able to mint to Acc7 (nobody)', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.mint(accounts[7], 36754, {from: accounts[0]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'Mint');
+    });
+  });
+  it('Check totalSupply after first successful mints', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997 + 12345, 'Incorrect totalSupply');
+      assert.equal(result, 21393997 + 12345 + 36754, 'Incorrect totalSupply');
     });
   });
-  it('TokenHolder 0 can transfer tokens to another account 9', function () {
+  it('Acc0 (owner, minter) can transfer tokens to another Acc9', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.transfer(accounts[9], 4000);
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'Transfer');
     });
   });
-  it('New Holder9 can transfer tokens to another holder 8', function () {
+  it('Acc9 (holder) can further transfer tokens to Acc8', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.transfer(accounts[8], 3000,{from: accounts[9]});
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'Transfer', 'Incorrect result of transfer');
+    });
+  });
+  it('Acc9 (holder) unable to transfer more than its balance', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.transfer(accounts[7], 1001,{from: accounts[9]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc9 (holder) unable to burn more than it has', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.burn(1001,{from: accounts[9]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc9 (holder) able to burn all its balance', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.burn(1000,{from: accounts[9]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'Burn');
     });
   });
   // ToDo overspend tests
@@ -153,28 +181,77 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997 + 12345, 'Incorrect totalSupply');
+      assert.equal(result, 21393997 + 12345 + 36754 - 1000, 'Incorrect totalSupply');
     });
   });
-  it('Burn tokens', function () {
+  it('Acc0 burns a part of its balance', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.burn(5345, {from: accounts[0]});
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'Burn', 'Incorrect result of burning');
     });
   });
-  it('Check balance after burning', function () {
+  it('Check Acc0 (holder, owner, minter) balance after burning', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.balanceOf.call(accounts[0]);
     }).then(function (result) {
       assert.equal(result, 3000, 'Incorrect account balance');
     });
   });
+  it('Acc8 (holder) burn part of its tokens', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.burn(2222, {from: accounts[8]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'Burn', 'Incorrect result of burning');
+    });
+  });
+  it('Check Acc8 (holder) balance after burning', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.balanceOf.call(accounts[8]);
+    }).then(function (result) {
+      assert.equal(result, 3000 - 2222, 'Incorrect account balance');
+    });
+  });
   it('Check totalSupply after burning', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997 + 12345 - 5345, 'Incorrect totalSupply');
+      assert.equal(result, 21393997 + 12345 + 36754 - 5345 - 2222 - 1000, 'Incorrect totalSupply');
+    });
+  });
+  it('Unprivileged holder can\'t finalize minting', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.finishMinting({from: accounts[9]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Minter can\'t finalize minting', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.finishMinting({from: accounts[3]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Owner can finalize minting', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.finishMinting({from: accounts[2]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'MintFinished');
+    });
+  });
+  it('Acc0 (owner + minter) unable to mint for himself after finalization', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.mint(accounts[0], 12861, {from: accounts[0]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc3 (minter) unable to mint for anybody after finalization', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.mint(accounts[6], 51429, {from: accounts[3]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
 });
