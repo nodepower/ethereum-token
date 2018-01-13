@@ -1,6 +1,13 @@
 var NodeToken = artifacts.require('NodeToken');
 
 contract('NodeToken', function (accounts) {
+  it('Check totalSupply after all migrations', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.totalSupply();
+    }).then(function (result) {
+      assert.equal(result, 21393997, 'Incorrect totalSupply');
+    });
+  });
   it('Owner can\'t mint tokens to himself until it added to minters', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 10000);
@@ -8,11 +15,18 @@ contract('NodeToken', function (accounts) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('Owner can mint tokens to non-owners', function () {
+  it('Owner can\'t mint tokens to non-owners', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[1], 500);
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Check totalSupply after unsuccessful mint', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.totalSupply();
+    }).then(function (result) {
+      assert.equal(result, 21393997, 'Incorrect totalSupply');
     });
   });
   it('Non-owner can\'t mint tokens', function () {
@@ -20,6 +34,13 @@ contract('NodeToken', function (accounts) {
       return instance.mint(accounts[0], 10000, {from: accounts[9]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Check totalSupply after unsuccessful mint', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.totalSupply();
+    }).then(function (result) {
+      assert.equal(result, 21393997, 'Incorrect totalSupply');
     });
   });
   it('Non-owner can\'t add owners', function () {
@@ -78,6 +99,13 @@ contract('NodeToken', function (accounts) {
       assert.equal(result['logs'][0]['event'], 'MinterAdded');
     });
   });
+  it('Check totalSupply after unsuccessful mint before actual minting', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.totalSupply();
+    }).then(function (result) {
+      assert.equal(result, 21393997, 'Incorrect totalSupply');
+    });
+  });
   it('First owner 0 now able to mint to himself', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 12345, {from: accounts[0]});
@@ -90,6 +118,13 @@ contract('NodeToken', function (accounts) {
       return instance.balanceOf(accounts[0]);
     }).then(function (result) {
       assert.equal(result, 12345);
+    });
+  });
+  it('Check totalSupply after first successful mint', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.totalSupply();
+    }).then(function (result) {
+      assert.equal(result, 21393997 + 12345, 'Incorrect totalSupply');
     });
   });
   it('TokenHolder 0 can transfer tokens to another account 9', function () {
@@ -114,6 +149,13 @@ contract('NodeToken', function (accounts) {
       assert.equal(result, 8345, 'Incorrect account balance');
     });
   });
+  it('Check totalSupply successful mints before burning', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.totalSupply();
+    }).then(function (result) {
+      assert.equal(result, 21393997 + 12345, 'Incorrect totalSupply');
+    });
+  });
   it('Burn tokens', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.burn(5345, {from: accounts[0]});
@@ -128,11 +170,11 @@ contract('NodeToken', function (accounts) {
       assert.equal(result, 3000, 'Incorrect account balance');
     });
   });
-  it('Check resulting totalSupply', function () {
+  it('Check totalSupply after burning', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 7000, 'Incorrect totalSupply');
+      assert.equal(result, 21393997 + 12345 - 5345, 'Incorrect totalSupply');
     });
   });
 });
