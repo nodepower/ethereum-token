@@ -5,7 +5,7 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997, 'Incorrect totalSupply');
+      assert.equal(result, 21400797, 'Incorrect totalSupply');
     });
   });
   it('Acc0 (owner by constructor) can\'t mint tokens to himself until it added to minters', function () {
@@ -26,7 +26,7 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997, 'Incorrect totalSupply');
+      assert.equal(result, 21400797, 'Incorrect totalSupply');
     });
   });
   it('Acc9 (nobody) can\'t mint tokens', function () {
@@ -40,7 +40,7 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997, 'Incorrect totalSupply');
+      assert.equal(result, 21400797, 'Incorrect totalSupply');
     });
   });
   it('Acc9 (nobody) can\'t add owners', function () {
@@ -103,7 +103,7 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997, 'Incorrect totalSupply');
+      assert.equal(result, 21400797, 'Incorrect totalSupply');
     });
   });
   it('First Acc0 (owner, minter) now able to mint to himself', function () {
@@ -131,7 +131,7 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997 + 12345 + 36754, 'Incorrect totalSupply');
+      assert.equal(result, 21400797 + 12345 + 36754, 'Incorrect totalSupply');
     });
   });
   it('Acc0 (owner, minter) can transfer tokens to another Acc9', function () {
@@ -181,7 +181,7 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997 + 12345 + 36754 - 1000, 'Incorrect totalSupply');
+      assert.equal(result, 21400797 + 12345 + 36754 - 1000, 'Incorrect totalSupply');
     });
   });
   it('Acc0 burns a part of its balance', function () {
@@ -216,7 +216,28 @@ contract('NodeToken', function (accounts) {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21393997 + 12345 + 36754 - 5345 - 2222 - 1000, 'Incorrect totalSupply');
+      assert.equal(result, 21400797 + 12345 + 36754 - 5345 - 2222 - 1000, 'Incorrect totalSupply');
+    });
+  });
+  it('Acc3 (minter) can\'t remove Acc0 from minters', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.delMinter(accounts[0], {from: accounts[3]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc2 (owner, minter) removes Acc0 from minters', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.delMinter(accounts[0], {from: accounts[2]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'MinterRemoved');
+    });
+  });
+  it('Acc0 (owner) can\'t mint tokens to himself after was removed from minters', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.mint(accounts[0], 10000);
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
   it('Unprivileged holder can\'t finalize minting', function () {
@@ -252,6 +273,48 @@ contract('NodeToken', function (accounts) {
       return instance.mint(accounts[6], 51429, {from: accounts[3]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc8 (holder) burns part of its tokens again', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.burn(212, {from: accounts[8]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'Burn', 'Incorrect result of burning');
+    });
+  });
+  it('Check Acc8 (holder) balance after one more burning', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.balanceOf.call(accounts[8]);
+    }).then(function (result) {
+      assert.equal(result, 3000 - 2222 - 212, 'Incorrect account balance');
+    });
+  });
+  it('Acc3 (minter) can\'t remove Acc0 from owners', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.delOwner(accounts[0], {from: accounts[3]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc9 (holder) can\'t remove Acc0 from owners', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.delOwner(accounts[0], {from: accounts[9]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc2 (owner) removes Acc0 from owners', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.delOwner(accounts[0], {from: accounts[2]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'OwnerRemoved');
+    });
+  });
+  it('Acc1 (owner) removes Acc2 from owners and becomes single owner', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.delOwner(accounts[2], {from: accounts[1]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'OwnerRemoved');
     });
   });
 });

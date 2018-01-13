@@ -2,7 +2,6 @@ var NodeToken = artifacts.require("NodeToken");
 var NodeMinter01 = artifacts.require("NodeMinter01");
 var NodeMinter02 = artifacts.require("NodeMinter02");
 var NodeMinter03 = artifacts.require("NodeMinter03");
-var NodeMinter04 = artifacts.require("NodeMinter04");
 
 module.exports = function (deployer) {
   deployer.then(function () {

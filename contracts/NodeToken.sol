@@ -15,7 +15,9 @@ contract NodeToken is BasicToken {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event MintFinished();
     event OwnerAdded(address indexed newOwner);
+    event OwnerRemoved(address indexed removedOwner);
     event MinterAdded(address indexed newMinter);
+    event MinterRemoved(address indexed removedMinter);
     event Burn(address indexed burner, uint256 value);
 
     function NodeToken() public  {
@@ -71,6 +73,7 @@ contract NodeToken is BasicToken {
 
     function delOwner(address _address) onlyOwner public {
         owners[_address] = false;
+        OwnerRemoved(_address);
     }
 
     /**
@@ -88,6 +91,7 @@ contract NodeToken is BasicToken {
 
     function delMinter(address _address) onlyOwner public {
         minters[_address] = false;
+        MinterRemoved(_address);
     }
 
     /**
