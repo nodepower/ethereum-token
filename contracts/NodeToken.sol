@@ -1,9 +1,9 @@
 pragma solidity ^0.4.18;
 
 
-import './token/BasicToken.sol';
+import './token/StandardToken.sol';
 
-contract NodeToken is BasicToken {
+contract NodeToken is StandardToken {
     string public name = "NodePower";
     string public symbol = "NODE";
     uint8 public decimals = 2;

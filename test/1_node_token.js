@@ -317,6 +317,63 @@ contract('NodeToken', function (accounts) {
       assert.equal(result['logs'][0]['event'], 'OwnerRemoved');
     });
   });
+  it('Acc8 (holder) unable approve more than its balance', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.approve(accounts[7], 567,{from: accounts[9]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Check Acc7 (spender) has no approval to transfer from Acc8 (holder)', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.allowance.call(accounts[8],accounts[7]);
+    }).then(function (result) {
+      assert.equal(result, 0);
+    });
+  });
+  it('Acc7 (spender) is unable to transfer non-approved money', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.transferFrom(accounts[8], accounts[5], 567, {from: accounts[7]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc8 (holder) is able to approve to Acc7 its balance', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.approve(accounts[7], 566,{from: accounts[8]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'Approval');
+    });
+  });
+  it('Check Acc7 (spender) approval to transfer from Acc8 (holder)', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.allowance.call(accounts[8],accounts[7]);
+    }).then(function (result) {
+      assert.equal(result, 566);
+    });
+  });
+  // ToDo decrease approval
+  it('Acc7 (spender) is able to transfer part of approved money', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.transferFrom(accounts[8], accounts[5], 500, {from: accounts[7]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'Transfer');
+    });
+  });
+  it('Acc7 (holder) is unable to transfer money more than approved', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.transferFrom(accounts[8], accounts[5], 67, {from: accounts[7]});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Acc7 (holder) is able to transfer remaining approved money', function () {
+    return NodeToken.deployed().then(function (instance) {
+      return instance.transferFrom(accounts[8], accounts[5], 66, {from: accounts[7]});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'Transfer');
+    });
+  });
 });
 
 /*
