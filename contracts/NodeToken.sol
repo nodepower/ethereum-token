@@ -13,7 +13,6 @@ contract NodeToken is StandardToken {
     mapping (address => bool) minters;
 
     event Mint(address indexed to, uint256 amount);
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event MintFinished();
     event OwnerAdded(address indexed newOwner);
     event OwnerRemoved(address indexed removedOwner);
@@ -66,11 +65,19 @@ contract NodeToken is StandardToken {
         Burn(burner, _value);
     }
 
+    /**
+     * @dev Adds administrative role to address
+     * @param _address The address that will get administrative privileges
+     */
     function addOwner(address _address) onlyOwner public {
         owners[_address] = true;
         OwnerAdded(_address);
     }
 
+    /**
+     * @dev Removes administrative role from address
+     * @param _address The address to remove administrative privileges from
+     */
     function delOwner(address _address) onlyOwner public {
         owners[_address] = false;
         OwnerRemoved(_address);
@@ -84,18 +91,26 @@ contract NodeToken is StandardToken {
         _;
     }
 
+    /**
+     * @dev Adds minter role to address (able to create new tokens)
+     * @param _address The address that will get minter privileges
+     */
     function addMinter(address _address) onlyOwner public {
         minters[_address] = true;
         MinterAdded(_address);
     }
 
+    /**
+     * @dev Removes minter role from address
+     * @param _address The address to remove minter privileges
+     */
     function delMinter(address _address) onlyOwner public {
         minters[_address] = false;
         MinterRemoved(_address);
     }
 
     /**
-     * @dev Throws if called by any account other than the miner.
+     * @dev Throws if called by any account other than the minter.
      */
     modifier onlyMinter() {
         require(minters[msg.sender]);

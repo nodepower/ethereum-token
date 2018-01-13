@@ -12,7 +12,6 @@ module.exports = function (deployer) {
       return NodeMinter01.deployed();
     }).then(function (instance) {
       nodeMinter01 = instance;
-      //console.log(nodeMinter);
       nodeToken.addMinter(nodeMinter01.address).then(function (instance) {
         nodeMinter01.Mint().then(function (instance) {
           nodeToken.delMinter(nodeMinter01.address);
@@ -25,7 +24,6 @@ module.exports = function (deployer) {
       return NodeMinter02.deployed();
     }).then(function (instance) {
       nodeMinter02 = instance;
-      //console.log(nodeMinter);
       nodeToken.addMinter(nodeMinter02.address).then(function (instance) {
         nodeMinter02.Mint().then(function (instance) {
           nodeToken.delMinter(nodeMinter02.address);
@@ -39,7 +37,6 @@ module.exports = function (deployer) {
       return NodeMinter03.deployed();
     }).then(function (instance) {
       nodeMinter03 = instance;
-      //console.log(nodeMinter);
       nodeToken.addMinter(nodeMinter03.address).then(function (instance) {
         nodeMinter03.Mint().then(function (instance) {
           nodeToken.delMinter(nodeMinter03.address);
