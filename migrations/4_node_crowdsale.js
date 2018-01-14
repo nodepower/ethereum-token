@@ -24,7 +24,7 @@ var phase00PercentStart = datetime.fromDate("2018-03-27T00:00:00Z");
 var phase00PercentEnd = datetime.fromDate("2018-04-16T00:00:00Z");
 console.log("00% period:", (phase00PercentEnd-phase00PercentStart)/60/60/24);
 
-module.exports = function(deployer) {
+module.exports = function(deployer, network, accounts) {
   var nodeTokenAddress = NodeToken.deployed().then(function (instance) {return instance.address});
-  deployer.deploy(NodeCrowdSale, nodeTokenAddress, '0x456', 100, [phase45PercentStart,phase45PercentEnd,45,phase40PercentStart,phase40PercentEnd,40]);
+  deployer.deploy(NodeCrowdSale, nodeTokenAddress, accounts[4], 100, [phase45PercentStart,phase45PercentEnd,45,phase40PercentStart,phase40PercentEnd,40]);
 };

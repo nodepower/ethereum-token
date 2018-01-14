@@ -37,7 +37,7 @@ contract('NodeCrowdSale', function (accounts) {
     return NodeCrowdSale.deployed().then(function (instance) {
       return instance.wallet();
     }).then(function (result) {
-      assert.equal(result, 0x456);
+      assert.equal(result, accounts[4]);
     });
   });
   it('Phases provisioned successfully', function () {
