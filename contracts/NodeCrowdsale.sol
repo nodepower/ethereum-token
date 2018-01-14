@@ -24,13 +24,16 @@ contract NodeCrowdsale {
     address public owner;
 
     // USD cents per ETH exchange rate
-    uint256 public rate;
+    uint256 public rateUSDcETH;
 
     // PreITO discount is 45%
     uint public constant bonus = 45;
 
     // PreITO ends on 2018-01-31 23:59:59 UTC
     uint256 public constant endTime = 1517443199;
+
+    // Minimum Deposit in USD cents
+    uint256 public constant minContributionUSDc = 1000;
 
 
     // amount of raised money in wei
@@ -49,7 +52,7 @@ contract NodeCrowdsale {
     function NodeCrowdsale(address _tokenAddress, uint256 _initialRate) public {
         require(_tokenAddress != address(0));
         token = NodeToken(_tokenAddress);
-        rate = _initialRate;
+        rateUSDcETH = _initialRate;
         wallet = msg.sender;
         owner = msg.sender;
     }
@@ -69,7 +72,7 @@ contract NodeCrowdsale {
         uint256 weiAmount = msg.value;
 
         // calculate token amount to be created
-        uint256 tokens = weiAmount.mul(rate);
+        uint256 tokens = weiAmount.mul(rateUSDcETH);
 
         // update state
         weiRaised = weiRaised.add(weiAmount);
@@ -81,12 +84,12 @@ contract NodeCrowdsale {
     }
 
     // set rate
-    function setRate(uint256 _rate) public onlyOwner {
+    function setRate(uint256 _rateUSDcETH) public onlyOwner {
         // don't allow to change rate more than 10%
-        assert(_rate < rate.mul(110).div(100));
-        assert(_rate > rate.mul(90).div(100));
-        rate = _rate;
-        RateUpdate(rate);
+        assert(_rateUSDcETH < rateUSDcETH.mul(110).div(100));
+        assert(_rateUSDcETH > rateUSDcETH.mul(90).div(100));
+        rateUSDcETH = _rateUSDcETH;
+        RateUpdate(rateUSDcETH);
     }
 
     /**
@@ -95,6 +98,13 @@ contract NodeCrowdsale {
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
+    }
+
+    // calculates how much tokens will beneficiary get
+    // for given amount of wei
+    function calculateTokenAmount(uint256 _wei) public view returns (uint256) {
+        assert(_wei != 0);
+        return 0;
     }
 
     // send ether to the fund collection wallet

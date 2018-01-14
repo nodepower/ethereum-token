@@ -32,7 +32,7 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Check rate equals initial', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.rate();
+      return instance.rateUSDcETH();
     }).then(function (result) {
       assert.equal(result, 14534);
     });
@@ -46,7 +46,7 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Check rate equals initial', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.rate();
+      return instance.rateUSDcETH();
     }).then(function (result) {
       assert.equal(result, 14534);
     });
@@ -60,7 +60,7 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Check rate after approved update', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.rate();
+      return instance.rateUSDcETH();
     }).then(function (result) {
       assert.equal(result, 15843);
     });
@@ -74,7 +74,7 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Rate shouldnt change after err. update', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.rate();
+      return instance.rateUSDcETH();
     }).then(function (result) {
       assert.equal(result, 15843);
     });
@@ -88,7 +88,7 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Check rate after approved update', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.rate();
+      return instance.rateUSDcETH();
     }).then(function (result) {
       assert.equal(result, 14417);
     });
@@ -102,7 +102,7 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Rate shouldnt change after err. update', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.rate();
+      return instance.rateUSDcETH();
     }).then(function (result) {
       assert.equal(result, 14417);
     });
