@@ -9,6 +9,13 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, accounts[0]);
     });
   });
+  it('Owner is msg sender', function () {
+    return NodeCrowdsale.deployed().then(function (instance) {
+      return instance.owner();
+    }).then(function (result) {
+      assert.equal(result, accounts[0]);
+    });
+  });
   it('Check end time equals 2018-01-31T23:59:59+00:00', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.endTime();

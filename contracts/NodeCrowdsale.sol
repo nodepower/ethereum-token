@@ -46,10 +46,10 @@ contract NodeCrowdsale {
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event RateUpdate(uint256 rate);
 
-    function NodeCrowdsale(address _token, uint256 _rate) public {
-        require(_token != address(0));
-        token = NodeToken(_token);
-        rate = _rate;
+    function NodeCrowdsale(address _tokenAddress, uint256 _initialRate) public {
+        require(_tokenAddress != address(0));
+        token = NodeToken(_tokenAddress);
+        rate = _initialRate;
         wallet = msg.sender;
         owner = msg.sender;
     }
