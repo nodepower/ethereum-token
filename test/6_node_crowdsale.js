@@ -72,11 +72,19 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, 130671);
     });
   });
-  it('Send a little amount of wei to fallback function', function () {
+  it('Send less than 100 USD to fallback function', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.send({value: 97652807432400});
+      return instance.sendTransaction({value: 757627935808251, gas: 300000});
+    }).catch(function (error) {
+      assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+    });
+  });
+  it('Send more than 100 USD to fallback function', function () {
+    return NodeCrowdsale.deployed().then(function (instance) {
+      return instance.sendTransaction({value: 76569678407350600, gas: 300000});
     }).then(function (result) {
-      assert.equal(result['logs'][0]['event'], 'RateUpdate');
+      console.log(result);
+      assert.equal(result['logs'][0]['event'], 'TokenPurchase');
     });
   });
   it('Owner updates rate in allowed limits +9%', function () {
