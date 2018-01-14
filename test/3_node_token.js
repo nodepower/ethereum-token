@@ -1,11 +1,11 @@
 var NodeToken = artifacts.require('NodeToken');
 
 contract('NodeToken', function (accounts) {
-  it('Check totalSupply after all migrations', function () {
+  it('Check initial', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.totalSupply();
     }).then(function (result) {
-      assert.equal(result, 21400797, 'Incorrect totalSupply');
+      assert.equal(result, 0, 'Incorrect totalSupply');
     });
   });
   it('Acc0 (owner by constructor) can\'t mint tokens to himself until it added to minters', function () {
@@ -22,25 +22,11 @@ contract('NodeToken', function (accounts) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
   });
-  it('TotalSupply didn\'t change after failed mint attempts', function () {
-    return NodeToken.deployed().then(function (instance) {
-      return instance.totalSupply();
-    }).then(function (result) {
-      assert.equal(result, 21400797, 'Incorrect totalSupply');
-    });
-  });
   it('Acc9 (nobody) can\'t mint tokens', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 10000, {from: accounts[9]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
-    });
-  });
-  it('TotalSupply didn\'t change after failed mint attempts', function () {
-    return NodeToken.deployed().then(function (instance) {
-      return instance.totalSupply();
-    }).then(function (result) {
-      assert.equal(result, 21400797, 'Incorrect totalSupply');
     });
   });
   it('Acc9 (nobody) can\'t add owners', function () {
@@ -99,13 +85,6 @@ contract('NodeToken', function (accounts) {
       assert.equal(result['logs'][0]['event'], 'MinterAdded');
     });
   });
-  it('TotalSupply didn\'t change after failed mint attempts', function () {
-    return NodeToken.deployed().then(function (instance) {
-      return instance.totalSupply();
-    }).then(function (result) {
-      assert.equal(result, 21400797, 'Incorrect totalSupply');
-    });
-  });
   it('First Acc0 (owner, minter) now able to mint to himself', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.mint(accounts[0], 12345, {from: accounts[0]});
@@ -125,13 +104,6 @@ contract('NodeToken', function (accounts) {
       return instance.mint(accounts[7], 36754, {from: accounts[0]});
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'Mint');
-    });
-  });
-  it('Check totalSupply after first successful mints', function () {
-    return NodeToken.deployed().then(function (instance) {
-      return instance.totalSupply();
-    }).then(function (result) {
-      assert.equal(result, 21400797 + 12345 + 36754, 'Incorrect totalSupply');
     });
   });
   it('Acc0 (owner, minter) can transfer tokens to another Acc9', function () {
@@ -177,13 +149,6 @@ contract('NodeToken', function (accounts) {
       assert.equal(result, 8345, 'Incorrect account balance');
     });
   });
-  it('Check totalSupply successful mints before burning', function () {
-    return NodeToken.deployed().then(function (instance) {
-      return instance.totalSupply();
-    }).then(function (result) {
-      assert.equal(result, 21400797 + 12345 + 36754 - 1000, 'Incorrect totalSupply');
-    });
-  });
   it('Acc0 burns a part of its balance', function () {
     return NodeToken.deployed().then(function (instance) {
       return instance.burn(5345, {from: accounts[0]});
@@ -210,13 +175,6 @@ contract('NodeToken', function (accounts) {
       return instance.balanceOf.call(accounts[8]);
     }).then(function (result) {
       assert.equal(result, 3000 - 2222, 'Incorrect account balance');
-    });
-  });
-  it('Check totalSupply after burning', function () {
-    return NodeToken.deployed().then(function (instance) {
-      return instance.totalSupply();
-    }).then(function (result) {
-      assert.equal(result, 21400797 + 12345 + 36754 - 5345 - 2222 - 1000, 'Incorrect totalSupply');
     });
   });
   it('Acc3 (minter) can\'t remove Acc0 from minters', function () {
