@@ -23,8 +23,15 @@ contract NodeCrowdsale {
     // address where funds are collected
     address public owner;
 
-    // how many token units a buyer gets per wei
+    // USD cents per ETH exchange rate
     uint256 public rate;
+
+    // PreITO discount is 45%
+    uint public constant bonus = 45;
+
+    // PreITO ends on 2018-01-31 23:59:59 UTC
+    uint256 public constant endTime = 1517443199;
+
 
     // amount of raised money in wei
     uint256 public weiRaised;
@@ -57,6 +64,7 @@ contract NodeCrowdsale {
     function buyTokens(address beneficiary) public payable {
         require(beneficiary != address(0));
         require(msg.value != 0);
+        require(now <= endTime);
 
         uint256 weiAmount = msg.value;
 
