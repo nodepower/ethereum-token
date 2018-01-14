@@ -72,6 +72,13 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, 130671);
     });
   });
+  it('Send a little amount of wei to fallback function', function () {
+    return NodeCrowdsale.deployed().then(function (instance) {
+      return instance.send({value: 97652807432400});
+    }).then(function (result) {
+      assert.equal(result['logs'][0]['event'], 'RateUpdate');
+    });
+  });
   it('Owner updates rate in allowed limits +9%', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.setRate(142431);
