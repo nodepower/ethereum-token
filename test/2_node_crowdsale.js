@@ -1,4 +1,4 @@
-//var NodeToken = artifacts.require('NodeToken');
+var NodeToken = artifacts.require('NodeToken');
 var NodeCrowdSale = artifacts.require("NodeCrowdSale");
 var datetime = require('unix-timestamp');
 var phase45PercentStart = datetime.fromDate("2018-01-15T00:00:00Z");
@@ -25,11 +25,13 @@ console.log("00% period:", (phase00PercentEnd-phase00PercentStart)/60/60/24);
 
 contract('NodeCrowdSale', function (accounts) {
   it('Token state variable filled', function () {
+    NodeToken.deployed().then(function (nodeToken) {
     return NodeCrowdSale.deployed().then(function (instance) {
       return instance.token();
     }).then(function (result) {
-      assert.equal(result, 0x123);
+      assert.equal(result, nodeToken.address);
     });
+  });
   });
   it('Wallet state variable filled', function () {
     return NodeCrowdSale.deployed().then(function (instance) {
