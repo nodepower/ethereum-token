@@ -27,7 +27,7 @@ contract NodeCrowdsale {
     uint256 public rateUSDcETH;
 
     // PreITO discount is 45%
-    uint public constant bonus = 45;
+    uint public constant bonusTokensPercent = 45;
 
     // PreITO ends on 2018-01-31 23:59:59 UTC
     uint256 public constant endTime = 1517443199;
@@ -71,8 +71,10 @@ contract NodeCrowdsale {
 
         uint256 weiAmount = msg.value;
 
+        require(calculateUSDcValue(weiAmount) >= minContributionUSDc);
+
         // calculate token amount to be created
-        uint256 tokens = weiAmount.mul(rateUSDcETH);
+        uint256 tokens = calculateTokenAmount(weiAmount);
 
         // update state
         weiRaised = weiRaised.add(weiAmount);
@@ -100,11 +102,23 @@ contract NodeCrowdsale {
         _;
     }
 
+    // calculate deposit value in USD Cents
+    function calculateUSDcValue(uint256 _weiDeposit) public view returns (uint256) {
+
+        // wei per USD cent
+        uint256 weiPerUSDc = 1 ether/rateUSDcETH;
+
+        // Deposited value converted to USD cents
+        uint256 depositValueInUSDc = _weiDeposit.div(weiPerUSDc);
+        return depositValueInUSDc;
+    }
+
     // calculates how much tokens will beneficiary get
     // for given amount of wei
-    function calculateTokenAmount(uint256 _wei) public view returns (uint256) {
-        assert(_wei != 0);
-        return 0;
+    function calculateTokenAmount(uint256 _weiDeposit) public view returns (uint256) {
+        uint256 mainTokens = calculateUSDcValue(_weiDeposit);
+        uint256 bonusTokens = mainTokens.mul(bonusTokensPercent).div(100);
+        return mainTokens.add(bonusTokens);
     }
 
     // send ether to the fund collection wallet

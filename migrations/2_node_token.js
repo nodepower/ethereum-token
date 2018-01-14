@@ -6,6 +6,6 @@ module.exports = function(deployer) {
   deployer.deploy(NodeToken);
   NodeToken.deployed().then(function (nToken) {
       console.log("##########" + nToken.address);
-      deployer.deploy(NodeCrowdsale, nToken.address, 14534);
+      deployer.deploy(NodeCrowdsale, nToken.address, 130671);
     })
 };

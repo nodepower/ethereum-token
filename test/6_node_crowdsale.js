@@ -25,21 +25,42 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Discount equals 45%', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.bonus();
+      return instance.bonusTokensPercent();
     }).then(function (result) {
       assert.equal(result, 45);
     });
   });
+  it('calculateUSDcValue with view function for 0.2356151 Ether', function () {
+    return NodeCrowdsale.deployed().then(function (instance) {
+      return instance.calculateUSDcValue(0.2356151 * 1e18);
+    }).then(function (result) {
+      assert.equal(result, 30788);
+    });
+  });
+  it('calculateTokenAmount with view function for 0.2356151 Ether (with bonus)', function () {
+    return NodeCrowdsale.deployed().then(function (instance) {
+      return instance.calculateTokenAmount(0.2356151 * 1e18);
+    }).then(function (result) {
+      assert.equal(result, 44642);
+    });
+  });
   it('Check rate equals initial', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.rateUSDcETH();
     }).then(function (result) {
-      assert.equal(result, 14534);
+      assert.equal(result, 130671);
+    });
+  });
+  it('Check weiRaised == 0', function () {
+    return NodeCrowdsale.deployed().then(function (instance) {
+      return instance.weiRaised();
+    }).then(function (result) {
+      assert.equal(result, 0);
     });
   });
   it('Non-owner prohibited to update rate', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.setRate(14539, {from: accounts[1]});
+      return instance.setRate(130672, {from: accounts[1]});
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
@@ -48,26 +69,26 @@ contract('NodeCrowdsale', function (accounts) {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.rateUSDcETH();
     }).then(function (result) {
-      assert.equal(result, 14534);
+      assert.equal(result, 130671);
     });
   });
   it('Owner updates rate in allowed limits +9%', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.setRate(15843);
+      return instance.setRate(142431);
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'RateUpdate');
     });
   });
-  it('Check rate after approved update', function () {
+  it('Check rate after allowed update', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.rateUSDcETH();
     }).then(function (result) {
-      assert.equal(result, 15843);
+      assert.equal(result, 142431);
     });
   });
   it('Owner updates rate in non-allowed limits +11%', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.setRate(17586);
+      return instance.setRate(158098);
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
@@ -76,12 +97,12 @@ contract('NodeCrowdsale', function (accounts) {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.rateUSDcETH();
     }).then(function (result) {
-      assert.equal(result, 15843);
+      assert.equal(result, 142431);
     });
   });
   it('Owner updates rate in allowed limits -9%', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.setRate(14417);
+      return instance.setRate(129612);
     }).then(function (result) {
       assert.equal(result['logs'][0]['event'], 'RateUpdate');
     });
@@ -90,12 +111,12 @@ contract('NodeCrowdsale', function (accounts) {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.rateUSDcETH();
     }).then(function (result) {
-      assert.equal(result, 14417);
+      assert.equal(result, 129612);
     });
   });
   it('Owner updates rate in non-allowed limits -11%', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.setRate(12831);
+      return instance.setRate(115354);
     }).catch(function (error) {
       assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
     });
@@ -104,7 +125,7 @@ contract('NodeCrowdsale', function (accounts) {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.rateUSDcETH();
     }).then(function (result) {
-      assert.equal(result, 14417);
+      assert.equal(result, 129612);
     });
   });
 });
