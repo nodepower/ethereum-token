@@ -11,9 +11,9 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('Owner is msg sender', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.owner();
+      return instance.owners.call(accounts[0]);
     }).then(function (result) {
-      assert.equal(result, accounts[0]);
+      assert.equal(result, true);
     });
   });
   it('Check end time equals 2018-01-31T23:59:59+00:00', function () {

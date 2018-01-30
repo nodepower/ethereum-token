@@ -20,8 +20,8 @@ contract NodeCrowdsale {
     // address where funds are collected
     address public wallet;
 
-    // address where funds are collected
-    address public owner;
+    // crowdsale administrators
+    mapping (address => bool) public owners;
 
     // USD cents per ETH exchange rate
     uint256 public rateUSDcETH;
@@ -48,14 +48,18 @@ contract NodeCrowdsale {
      */
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event RateUpdate(uint256 rate);
+    event OwnerAdded(address indexed newOwner);
+    event OwnerRemoved(address indexed removedOwner);
 
     function NodeCrowdsale(address _tokenAddress, uint256 _initialRate) public {
         require(_tokenAddress != address(0));
         token = NodeToken(_tokenAddress);
         rateUSDcETH = _initialRate;
         wallet = msg.sender;
-        owner = msg.sender;
+        owners[msg.sender] = true;
     }
+
+    // ToDo need to implement set wallet function
 
 
     // fallback function can be used to buy tokens
@@ -95,10 +99,28 @@ contract NodeCrowdsale {
     }
 
     /**
+     * @dev Adds administrative role to address
+     * @param _address The address that will get administrative privileges
+     */
+    function addOwner(address _address) onlyOwner public {
+        owners[_address] = true;
+        OwnerAdded(_address);
+    }
+
+    /**
+     * @dev Removes administrative role from address
+     * @param _address The address to remove administrative privileges from
+     */
+    function delOwner(address _address) onlyOwner public {
+        owners[_address] = false;
+        OwnerRemoved(_address);
+    }
+
+    /**
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(msg.sender == owner);
+        require(owners[msg.sender]);
         _;
     }
 
