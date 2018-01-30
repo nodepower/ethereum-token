@@ -51,6 +51,7 @@ contract NodeCrowdsale {
      */
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event RateUpdate(uint256 rate);
+    event WalletSet(address indexed wallet);
     event OwnerAdded(address indexed newOwner);
     event OwnerRemoved(address indexed removedOwner);
     event BotAdded(address indexed newBot);
@@ -65,7 +66,14 @@ contract NodeCrowdsale {
         bots[msg.sender] = true;
     }
 
-    // ToDo need to implement set wallet function
+    /**
+     * @dev Update collecting wallet address
+     * @param _address The address to send collected funds
+     */
+    function setWallet(address _address) onlyOwner public {
+        wallet = _address;
+        WalletSet(_address);
+    }
 
 
     // fallback function can be used to buy tokens

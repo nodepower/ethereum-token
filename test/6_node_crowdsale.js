@@ -192,6 +192,34 @@ contract('NodeCrowdsale', function (accounts) {
           assert.equal(result, 141276);
       });
   });
+  it('Non-owner prohibited to update wallet', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.setWallet(accounts[3], {from: accounts[1]});
+      }).catch(function (error) {
+          assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+      });
+  });
+  it('Wallet collecting ethers not changed after err update', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.wallet();
+      }).then(function (result) {
+          assert.equal(result, accounts[0]);
+      });
+  });
+  it('Owner is able to update wallet', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.setWallet(accounts[3]);
+      }).then(function (result) {
+          assert.equal(result['logs'][0]['event'], 'WalletSet');
+      });
+  });
+  it('Wallet collecting ethers changed after update by Owner', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.wallet();
+      }).then(function (result) {
+          assert.equal(result, accounts[3]);
+      });
+  });
 });
 
 /*
