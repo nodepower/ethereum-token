@@ -143,6 +143,55 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, 129612);
     });
   });
+  it('Non-owner prohibited to update bots list', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.addBot(accounts[1], {from: accounts[1]});
+      }).catch(function (error) {
+          assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+      });
+  });
+  it('Owner adds Acc1 as the bot', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.addBot(accounts[1]);
+      }).then(function (result) {
+          assert.equal(result['logs'][0]['event'], 'BotAdded');
+      });
+  });
+  it('Bot updates rate in allowed limits +9%', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.setRate(141276, {from: accounts[1]});
+      }).then(function (result) {
+          assert.equal(result['logs'][0]['event'], 'RateUpdate');
+      });
+  });
+  it('Check rate after allowed update', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.rateUSDcETH();
+      }).then(function (result) {
+          assert.equal(result, 141276, {from: accounts[1]});
+      });
+  });
+  it('Owner removes himself from bots list', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.delBot(accounts[0]);
+      }).then(function (result) {
+          assert.equal(result['logs'][0]['event'], 'BotRemoved');
+      });
+  });
+  it('Just removed bot (Ex-owner) prohibited to update rate', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.setRate(141277);
+      }).catch(function (error) {
+          assert.isAbove(error.message.search('VM Exception while processing transaction'), -1, 'revert must be returned')
+      });
+  });
+  it('Check rate didnt change after err. update', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.rateUSDcETH();
+      }).then(function (result) {
+          assert.equal(result, 141276);
+      });
+  });
 });
 
 /*
