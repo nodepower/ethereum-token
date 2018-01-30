@@ -23,6 +23,9 @@ contract NodeCrowdsale {
     // crowdsale administrators
     mapping (address => bool) public owners;
 
+    // Rate updating bots
+    mapping (address => bool) public bots;
+
     // USD cents per ETH exchange rate
     uint256 public rateUSDcETH;
 
@@ -50,6 +53,8 @@ contract NodeCrowdsale {
     event RateUpdate(uint256 rate);
     event OwnerAdded(address indexed newOwner);
     event OwnerRemoved(address indexed removedOwner);
+    event BotAdded(address indexed newBot);
+    event BotRemoved(address indexed removedBot);
 
     function NodeCrowdsale(address _tokenAddress, uint256 _initialRate) public {
         require(_tokenAddress != address(0));
@@ -57,6 +62,7 @@ contract NodeCrowdsale {
         rateUSDcETH = _initialRate;
         wallet = msg.sender;
         owners[msg.sender] = true;
+        bots[msg.sender] = true;
     }
 
     // ToDo need to implement set wallet function
@@ -90,7 +96,7 @@ contract NodeCrowdsale {
     }
 
     // set rate
-    function setRate(uint256 _rateUSDcETH) public onlyOwner {
+    function setRate(uint256 _rateUSDcETH) public onlyBot {
         // don't allow to change rate more than 10%
         assert(_rateUSDcETH < rateUSDcETH.mul(110).div(100));
         assert(_rateUSDcETH > rateUSDcETH.mul(90).div(100));
@@ -121,6 +127,32 @@ contract NodeCrowdsale {
      */
     modifier onlyOwner() {
         require(owners[msg.sender]);
+        _;
+    }
+
+    /**
+     * @dev Adds rate updating bot
+     * @param _address The address of the rate bot
+     */
+    function addBot(address _address) onlyOwner public {
+        bots[_address] = true;
+        BotAdded(_address);
+    }
+
+    /**
+     * @dev Removes rate updating bot address
+     * @param _address The address of the rate bot
+     */
+    function delBot(address _address) onlyOwner public {
+        bots[_address] = false;
+        BotRemoved(_address);
+    }
+
+    /**
+     * @dev Throws if called by any account other than the bot.
+     */
+    modifier onlyBot() {
+        require(bots[msg.sender]);
         _;
     }
 
