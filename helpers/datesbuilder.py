@@ -9,7 +9,7 @@ def print_phase(phase_name, date_text_start, date_text_end):
     date_start_utc = calendar.timegm(date_start.utctimetuple())
     date_end_utc = calendar.timegm(date_end.utctimetuple())
     days = int((date_end_utc - date_start_utc)/60/60/24)
-    print(phase_name, date_start_utc, date_end_utc, days)
+    print(phase_name, date_start, date_start_utc, date_end, date_end_utc, days)
 
 
 print_phase("phase45", "31DEC2017 23:59:59", "31JAN2018 23:59:59")
