@@ -16,12 +16,12 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, true);
     });
   });
-  it('Check Absolute End time equals 2018-04-16 23:59:59', function () {
-    return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.absEndTime();
-    }).then(function (result) {
-      assert.equal(result, 1523923199);
-    });
+  it('Discount equals 0% before 0 phase', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.getBonusPercent(1514000000);
+      }).then(function (result) {
+          assert.equal(result, 0);
+      });
   });
   it('Discount equals 45% for 0 phase', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
@@ -65,7 +65,7 @@ contract('NodeCrowdsale', function (accounts) {
           assert.equal(result, 10);
       });
   });
-  it('Discount equals 0% for 6 phase', function () {
+  it('Discount equals 0% after 5 phase', function () {
       return NodeCrowdsale.deployed().then(function (instance) {
           return instance.getBonusPercent(1523000000);
       }).then(function (result) {

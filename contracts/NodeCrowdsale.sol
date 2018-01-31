@@ -32,8 +32,8 @@ contract NodeCrowdsale {
     // Phases list, see schedule in constructor
     mapping (uint => Phase) phases;
 
-    // The total number of phases (0...6)
-    uint public totalPhases = 7;
+    // The total number of phases (0...5)
+    uint public totalPhases = 6;
 
     // Description for each phase
     struct Phase {
@@ -41,9 +41,6 @@ contract NodeCrowdsale {
         uint256 endTime;
         uint256 bonusPercent;
     }
-
-    // Time until this contract operational
-    uint256 public absEndTime;
 
     // Minimum Deposit in USD cents
     uint256 public constant minContributionUSDc = 1000;
@@ -92,7 +89,7 @@ contract NodeCrowdsale {
         20%     2018-02-25 00:00:00 1519516800 2018-03-06 23:59:59 1520380799
         15%     2018-03-07 00:00:00 1520380800 2018-03-16 23:59:59 1521244799
         10%     2018-03-17 00:00:00 1521244800 2018-03-26 23:59:59 1522108799
-        00%     2018-03-27 00:00:00 1522108800 2018-04-16 23:59:59 1523923199
+        00%     2018-03-27 00:00:00 1522108800 <not specified>
         */
         phases[0].bonusPercent = 45;
         phases[0].startTime = 1514764799;
@@ -112,10 +109,6 @@ contract NodeCrowdsale {
         phases[5].bonusPercent = 10;
         phases[5].startTime = 1521244800;
         phases[5].endTime = 1522108799;
-        phases[6].bonusPercent = 0;
-        phases[6].startTime = 1522108800;
-        phases[6].endTime = 1523923199;
-        absEndTime = phases[6].endTime;
     }
 
     /**
@@ -137,7 +130,6 @@ contract NodeCrowdsale {
     function buyTokens(address beneficiary) public payable {
         require(beneficiary != address(0));
         require(msg.value != 0);
-        require(now <= absEndTime);
 
         uint256 currentBonusPercent = getBonusPercent(now);
 
@@ -158,14 +150,14 @@ contract NodeCrowdsale {
     }
 
     // If phase exists return corresponding bonus for the given date
-    // If phase doesn't exist for the given date - revert
+    // else return 0 (percent)
     function getBonusPercent(uint256 datetime) public view returns (uint256) {
         for (uint i = 0; i < totalPhases; i++) {
             if (datetime >= phases[i].startTime && datetime <= phases[i].endTime) {
                 return phases[i].bonusPercent;
             }
         }
-        revert();
+        return 0;
     }
 
     // set rate
