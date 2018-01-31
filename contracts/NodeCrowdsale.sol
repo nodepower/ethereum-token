@@ -4,11 +4,11 @@ import './math/SafeMath.sol';
 import './NodeToken.sol';
 
 /**
- * @title Crowdsale
- * @dev Crowdsale is a base contract for managing a token crowdsale.
- * Crowdsales have a start and end timestamps, where investors can make
+ * @title NodeCrowdsale
+ * @dev NodeCrowdsale is a contract for managing a token crowdsale for NodePower project.
+ * Crowdsale have 7 phases with start and end timestamps, where investors can make
  * token purchases and the crowdsale will assign them tokens based
- * on a token per ETH rate. Funds collected are forwarded to a wallet
+ * on a token per ETH rate and bonuses. Collected funds are forwarded to a wallet
  * as they arrive.
  */
 contract NodeCrowdsale {
@@ -17,37 +17,39 @@ contract NodeCrowdsale {
     // The token being sold
     NodeToken public token;
 
-    // address where funds get collected
+    // External wallet where funds get forwarded
     address public wallet;
 
-    // crowdsale administrators
+    // Crowdsale administrators
     mapping (address => bool) public owners;
 
-    // Rate updating bots
+    // External bots updating rates
     mapping (address => bool) public bots;
 
     // USD cents per ETH exchange rate
     uint256 public rateUSDcETH;
 
-    // Phase parameters list
+    // Phases list, see schedule in constructor
     mapping (uint => Phase) phases;
 
+    // The total number of phases (0...6)
     uint public totalPhases = 7;
 
+    // Description for each phase
     struct Phase {
         uint256 startTime;
         uint256 endTime;
         uint256 bonusPercent;
     }
 
-    // time until this contract operational
+    // Time until this contract operational
     uint256 public absEndTime;
 
     // Minimum Deposit in USD cents
     uint256 public constant minContributionUSDc = 1000;
 
 
-    // amount of raised money in wei
+    // Amount of raised Ethers (in wei).
     uint256 public weiRaised;
 
     /**
@@ -55,13 +57,22 @@ contract NodeCrowdsale {
      * @param purchaser who paid for the tokens
      * @param beneficiary who got the tokens
      * @param value weis paid for purchase
+     * @param bonusPercent free tokens percantage for the phase
      * @param amount amount of tokens purchased
      */
-    event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+    event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 bonusPercent, uint256 amount);
+
+    // event for rate update logging
     event RateUpdate(uint256 rate);
+
+    // event for wallet update
     event WalletSet(address indexed wallet);
+
+    // owners management events
     event OwnerAdded(address indexed newOwner);
     event OwnerRemoved(address indexed removedOwner);
+
+    // bot management events
     event BotAdded(address indexed newBot);
     event BotRemoved(address indexed removedBot);
 
@@ -141,7 +152,7 @@ contract NodeCrowdsale {
         weiRaised = weiRaised.add(weiAmount);
 
         token.mint(beneficiary, tokens);
-        TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
+        TokenPurchase(msg.sender, beneficiary, weiAmount, currentBonusPercent, tokens);
 
         forwardFunds();
     }
