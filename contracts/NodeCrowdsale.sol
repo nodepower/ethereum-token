@@ -32,7 +32,7 @@ contract NodeCrowdsale {
     // Phase parameters list
     mapping (uint => Phase) phases;
 
-    uint public totalPhases = 1;
+    uint public totalPhases = 7;
 
     struct Phase {
         uint256 startTime;
@@ -94,7 +94,7 @@ contract NodeCrowdsale {
         phases[2].endTime = 1519516799;
         phases[3].bonusPercent = 20;
         phases[3].startTime = 1519516800;
-        phases[3].endTime = 1519516799;
+        phases[3].endTime = 1520380799;
         phases[4].bonusPercent = 15;
         phases[4].startTime = 1520380800;
         phases[4].endTime = 1521244799;
@@ -128,7 +128,7 @@ contract NodeCrowdsale {
         require(msg.value != 0);
         require(now <= absEndTime);
 
-        uint256 currentBonusPercent = getCurrentBonusPercent();
+        uint256 currentBonusPercent = getBonusPercent(now);
 
         uint256 weiAmount = msg.value;
 
@@ -146,8 +146,15 @@ contract NodeCrowdsale {
         forwardFunds();
     }
 
-    function getCurrentBonusPercent() public view returns (uint256) {
-        return 45; //ToDo find current Phase and return current bonus percentage
+    // If phase exists return corresponding bonus for the given date
+    // If phase doesn't exist for the given date - revert
+    function getBonusPercent(uint256 datetime) public view returns (uint256) {
+        for (uint i = 0; i < totalPhases; i++) {
+            if (datetime >= phases[i].startTime && datetime <= phases[i].endTime) {
+                return phases[i].bonusPercent;
+            }
+        }
+        revert();
     }
 
     // set rate

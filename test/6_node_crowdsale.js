@@ -16,7 +16,6 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, true);
     });
   });
-  // ToDo fix dates and add all phases check
   it('Check Absolute End time equals 2018-04-16 23:59:59', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.absEndTime();
@@ -24,12 +23,54 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, 1523923199);
     });
   });
-  it('Discount equals 45%', function () {
+  it('Discount equals 45% for 0 phase', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.getCurrentBonusPercent();
+      return instance.getBonusPercent(1517443000);
     }).then(function (result) {
       assert.equal(result, 45);
     });
+  });
+  it('Discount equals 40% for 1 phase', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.getBonusPercent(1518652000);
+      }).then(function (result) {
+          assert.equal(result, 40);
+      });
+  });
+  it('Discount equals 30% for 2 phase', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.getBonusPercent(1518652800);
+      }).then(function (result) {
+          assert.equal(result, 30);
+      });
+  });
+  it('Discount equals 20% for 3 phase', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.getBonusPercent(1520000000);
+      }).then(function (result) {
+          assert.equal(result, 20);
+      });
+  });
+  it('Discount equals 15% for 4 phase', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.getBonusPercent(1521000000);
+      }).then(function (result) {
+          assert.equal(result, 15);
+      });
+  });
+  it('Discount equals 10% for 5 phase', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.getBonusPercent(1522000000);
+      }).then(function (result) {
+          assert.equal(result, 10);
+      });
+  });
+  it('Discount equals 0% for 6 phase', function () {
+      return NodeCrowdsale.deployed().then(function (instance) {
+          return instance.getBonusPercent(1523000000);
+      }).then(function (result) {
+          assert.equal(result, 0);
+      });
   });
   it('calculateUSDcValue with view function for 0.2356151 Ether', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
@@ -84,7 +125,6 @@ contract('NodeCrowdsale', function (accounts) {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.sendTransaction({value: 76569678407350600, gas: 300000});
     }).then(function (result) {
-      console.log(result);
       assert.equal(result['logs'][0]['event'], 'TokenPurchase');
     });
   });
