@@ -1,8 +1,5 @@
 pragma solidity ^0.4.18;
 
-// NodeCrowdsale deployed on Rinkeby with args ("0x9a7d4c7c0a31a13307bcd85404f10c3b48d84ea7", 110800)
-// https://rinkeby.etherscan.io/address/0x261fdbea32243df15a6d797c961c22f4b6a9561e
-
 /**
  * @title ERC20Basic
  * @dev Simpler version of ERC20 interface
