@@ -16,16 +16,17 @@ contract('NodeCrowdsale', function (accounts) {
       assert.equal(result, true);
     });
   });
-  it('Check end time equals 2018-01-31T23:59:59+00:00', function () {
+  // ToDo fix dates and add all phases check
+  it('Check Absolute End time equals 2018-01-31T23:59:59+00:00', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.endTime();
+      return instance.absEndTime();
     }).then(function (result) {
-      assert.equal(result, 1517443199);
+      assert.equal(result, 2517443199);
     });
   });
   it('Discount equals 45%', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.bonusTokensPercent();
+      return instance.getCurrentBonusPercent();
     }).then(function (result) {
       assert.equal(result, 45);
     });
@@ -39,7 +40,7 @@ contract('NodeCrowdsale', function (accounts) {
   });
   it('calculateTokenAmount with view function for 0.2356151 Ether (with bonus)', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
-      return instance.calculateTokenAmount(0.2356151 * 1e18);
+      return instance.calculateTokenAmount(0.2356151 * 1e18, 45);
     }).then(function (result) {
       assert.equal(result, 44642);
     });

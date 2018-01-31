@@ -17,7 +17,7 @@ contract NodeCrowdsale {
     // The token being sold
     NodeToken public token;
 
-    // address where funds are collected
+    // address where funds get collected
     address public wallet;
 
     // crowdsale administrators
@@ -29,11 +29,19 @@ contract NodeCrowdsale {
     // USD cents per ETH exchange rate
     uint256 public rateUSDcETH;
 
-    // PreITO discount is 45%
-    uint public constant bonusTokensPercent = 45;
+    // Phase parameters list
+    mapping (uint => Phase) phases;
 
-    // PreITO ends on 2018-01-31 23:59:59 UTC
-    uint256 public constant endTime = 1517443199;
+    uint public totalPhases = 1;
+
+    struct Phase {
+        uint256 startTime;
+        uint256 endTime;
+        uint256 bonusPercent;
+    }
+
+    // time until this contract operational
+    uint256 public absEndTime;
 
     // Minimum Deposit in USD cents
     uint256 public constant minContributionUSDc = 1000;
@@ -64,6 +72,10 @@ contract NodeCrowdsale {
         wallet = msg.sender;
         owners[msg.sender] = true;
         bots[msg.sender] = true;
+        phases[0].startTime = 0;
+        phases[0].endTime = 2517443199;
+        phases[0].bonusPercent = 45;
+        absEndTime = phases[0].endTime;
     }
 
     /**
@@ -85,14 +97,16 @@ contract NodeCrowdsale {
     function buyTokens(address beneficiary) public payable {
         require(beneficiary != address(0));
         require(msg.value != 0);
-        require(now <= endTime);
+        require(now <= absEndTime);
+
+        uint256 currentBonusPercent = getCurrentBonusPercent();
 
         uint256 weiAmount = msg.value;
 
         require(calculateUSDcValue(weiAmount) >= minContributionUSDc);
 
         // calculate token amount to be created
-        uint256 tokens = calculateTokenAmount(weiAmount);
+        uint256 tokens = calculateTokenAmount(weiAmount, currentBonusPercent);
 
         // update state
         weiRaised = weiRaised.add(weiAmount);
@@ -101,6 +115,10 @@ contract NodeCrowdsale {
         TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
         forwardFunds();
+    }
+
+    function getCurrentBonusPercent() public view returns (uint256) {
+        return 45; //ToDo find current Phase and return current bonus percentage
     }
 
     // set rate
@@ -177,9 +195,9 @@ contract NodeCrowdsale {
 
     // calculates how much tokens will beneficiary get
     // for given amount of wei
-    function calculateTokenAmount(uint256 _weiDeposit) public view returns (uint256) {
+    function calculateTokenAmount(uint256 _weiDeposit, uint256 _bonusTokensPercent) public view returns (uint256) {
         uint256 mainTokens = calculateUSDcValue(_weiDeposit);
-        uint256 bonusTokens = mainTokens.mul(bonusTokensPercent).div(100);
+        uint256 bonusTokens = mainTokens.mul(_bonusTokensPercent).div(100);
         return mainTokens.add(bonusTokens);
     }
 
