@@ -17,11 +17,11 @@ contract('NodeCrowdsale', function (accounts) {
     });
   });
   // ToDo fix dates and add all phases check
-  it('Check Absolute End time equals 2018-01-31T23:59:59+00:00', function () {
+  it('Check Absolute End time equals 2018-04-16 23:59:59', function () {
     return NodeCrowdsale.deployed().then(function (instance) {
       return instance.absEndTime();
     }).then(function (result) {
-      assert.equal(result, 2517443199);
+      assert.equal(result, 1523923199);
     });
   });
   it('Discount equals 45%', function () {

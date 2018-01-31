@@ -72,10 +72,39 @@ contract NodeCrowdsale {
         wallet = msg.sender;
         owners[msg.sender] = true;
         bots[msg.sender] = true;
-        phases[0].startTime = 0;
-        phases[0].endTime = 2517443199;
+        /*
+        ICO SCHEDULE
+        Bonus        start time               end time
+        45%     2017-12-31 23:59:59 1514764799 2018-01-31 23:59:59 1517443199
+        40%     2018-02-01 00:00:00 1517443200 2018-02-14 23:59:59 1518652799
+        30%     2018-02-15 00:00:00 1518652800 2018-02-24 23:59:59 1519516799
+        20%     2018-02-25 00:00:00 1519516800 2018-03-06 23:59:59 1520380799
+        15%     2018-03-07 00:00:00 1520380800 2018-03-16 23:59:59 1521244799
+        10%     2018-03-17 00:00:00 1521244800 2018-03-26 23:59:59 1522108799
+        00%     2018-03-27 00:00:00 1522108800 2018-04-16 23:59:59 1523923199
+        */
         phases[0].bonusPercent = 45;
-        absEndTime = phases[0].endTime;
+        phases[0].startTime = 1514764799;
+        phases[0].endTime = 1517443199;
+        phases[1].bonusPercent = 40;
+        phases[1].startTime = 1517443200;
+        phases[1].endTime = 1518652799;
+        phases[2].bonusPercent = 30;
+        phases[2].startTime = 1518652800;
+        phases[2].endTime = 1519516799;
+        phases[3].bonusPercent = 20;
+        phases[3].startTime = 1519516800;
+        phases[3].endTime = 1519516799;
+        phases[4].bonusPercent = 15;
+        phases[4].startTime = 1520380800;
+        phases[4].endTime = 1521244799;
+        phases[5].bonusPercent = 10;
+        phases[5].startTime = 1521244800;
+        phases[5].endTime = 1522108799;
+        phases[6].bonusPercent = 0;
+        phases[6].startTime = 1522108800;
+        phases[6].endTime = 1523923199;
+        absEndTime = phases[6].endTime;
     }
 
     /**
